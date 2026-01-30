@@ -1,0 +1,898 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AgroSense - Precision Irrigation Monitoring</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: #f9fafb;
+            color: #1f2937;
+            line-height: 1.6;
+        }
+
+        /* Navigation */
+        nav {
+            background: #ffffff;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            padding: 1.2rem 0;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .nav-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #047857;
+        }
+
+        .nav-subtitle {
+            font-size: 0.85rem;
+            color: #6b7280;
+            font-weight: 400;
+        }
+
+        /* Hero Section */
+        .hero {
+            background: linear-gradient(135deg, #065f46 0%, #047857 100%);
+            color: white;
+            padding: 4rem 2rem;
+        }
+
+        .hero-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 3rem;
+            align-items: center;
+        }
+
+        .hero-content h1 {
+            font-size: 2.75rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            line-height: 1.2;
+        }
+
+        .hero-content p {
+            font-size: 1.15rem;
+            line-height: 1.7;
+            opacity: 0.95;
+            margin-bottom: 1.5rem;
+        }
+
+        .hero-image {
+            width: 100%;
+            height: 350px;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+        }
+
+        .hero-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        /* Main Content */
+        .main-content {
+            max-width: 1200px;
+            margin: -3rem auto 3rem;
+            padding: 0 2rem;
+        }
+
+        .card {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.07);
+            padding: 2.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .card-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: #047857;
+            margin-bottom: 0.5rem;
+        }
+
+        .card-subtitle {
+            color: #6b7280;
+            margin-bottom: 2rem;
+            font-size: 0.95rem;
+        }
+
+        /* Form Styles */
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        label {
+            font-weight: 500;
+            color: #374151;
+            margin-bottom: 0.5rem;
+            font-size: 0.9rem;
+        }
+
+        input, select {
+            padding: 0.75rem 1rem;
+            border: 2px solid #e5e7eb;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: all 0.2s;
+            background: #ffffff;
+        }
+
+        input:focus, select:focus {
+            outline: none;
+            border-color: #047857;
+            box-shadow: 0 0 0 3px rgba(4, 120, 87, 0.1);
+        }
+
+        input::placeholder {
+            color: #9ca3af;
+        }
+
+        button {
+            background: #047857;
+            color: white;
+            padding: 1rem 2.5rem;
+            border: none;
+            border-radius: 8px;
+            font-size: 1.05rem;
+            font-weight: 600;
+            cursor: pointer;
+            width: 100%;
+            transition: all 0.2s;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        button:hover {
+            background: #065f46;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(4, 120, 87, 0.3);
+        }
+
+        button:active {
+            transform: translateY(0);
+        }
+
+        button:disabled {
+            background: #9ca3af;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .auto-fill-btn {
+            background: #059669;
+            margin-bottom: 0;
+            font-size: 1rem;
+            padding: 0.85rem 2rem;
+        }
+
+        .auto-fill-btn:hover {
+            background: #047857;
+        }
+
+        .location-status {
+            margin-top: 0.75rem;
+            font-size: 0.9rem;
+            color: #059669;
+            text-align: center;
+        }
+
+        .location-status.error {
+            color: #dc2626;
+        }
+
+        /* Chat Widget - Farmer Theme */
+        .chat-button {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            width: 70px;
+            height: 70px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #ea580c 0%, #dc2626 100%);
+            color: white;
+            border: 3px solid white;
+            font-size: 2.2rem;
+            cursor: pointer;
+            box-shadow: 0 6px 20px rgba(220, 38, 38, 0.4);
+            transition: all 0.3s;
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .chat-button:hover {
+            transform: scale(1.1) rotate(5deg);
+            box-shadow: 0 8px 25px rgba(220, 38, 38, 0.5);
+        }
+
+        .chat-widget {
+            position: fixed;
+            bottom: 6rem;
+            right: 2rem;
+            width: 380px;
+            height: 500px;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+            display: none;
+            flex-direction: column;
+            z-index: 999;
+        }
+
+        .chat-widget.open {
+            display: flex;
+        }
+
+        .chat-header {
+            background: linear-gradient(135deg, #ea580c 0%, #dc2626 100%);
+            color: white;
+            padding: 1.5rem;
+            border-radius: 12px 12px 0 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .chat-header h3 {
+            font-size: 1.15rem;
+            font-weight: 600;
+            margin: 0;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .farmer-avatar {
+            font-size: 1.8rem;
+        }
+
+        .chat-close {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 1.5rem;
+            cursor: pointer;
+            padding: 0;
+            width: auto;
+        }
+
+        .chat-messages {
+            flex: 1;
+            overflow-y: auto;
+            padding: 1.25rem;
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .chat-message {
+            max-width: 80%;
+            padding: 0.75rem 1rem;
+            border-radius: 12px;
+            line-height: 1.5;
+            font-size: 0.95rem;
+        }
+
+        .chat-message.user {
+            background: linear-gradient(135deg, #ea580c 0%, #dc2626 100%);
+            color: white;
+            align-self: flex-end;
+            border-bottom-right-radius: 4px;
+        }
+
+        .chat-message.bot {
+            background: #f3f4f6;
+            color: #1f2937;
+            align-self: flex-start;
+            border-bottom-left-radius: 4px;
+        }
+
+        .chat-input-container {
+            padding: 1rem;
+            border-top: 1px solid #e5e7eb;
+            display: flex;
+            gap: 0.75rem;
+        }
+
+        .chat-input {
+            flex: 1;
+            padding: 0.75rem;
+            border: 2px solid #e5e7eb;
+            border-radius: 8px;
+            font-size: 0.95rem;
+        }
+
+        .chat-input:focus {
+            outline: none;
+            border-color: #047857;
+        }
+
+        .chat-send {
+            background: linear-gradient(135deg, #ea580c 0%, #dc2626 100%);
+            color: white;
+            border: none;
+            padding: 0.75rem 1.25rem;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            width: auto;
+        }
+
+        .chat-send:hover {
+            background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%);
+        }
+
+        .chat-send:disabled {
+            background: #9ca3af;
+        }
+
+        .typing-indicator {
+            display: none;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.75rem 1rem;
+            background: #f3f4f6;
+            border-radius: 12px;
+            align-self: flex-start;
+            max-width: 80px;
+        }
+
+        .typing-indicator.visible {
+            display: flex;
+        }
+
+        .typing-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #9ca3af;
+            animation: typing 1.4s infinite;
+        }
+
+        .typing-dot:nth-child(2) {
+            animation-delay: 0.2s;
+        }
+
+        .typing-dot:nth-child(3) {
+            animation-delay: 0.4s;
+        }
+
+        @keyframes typing {
+            0%, 60%, 100% {
+                transform: translateY(0);
+            }
+            30% {
+                transform: translateY(-10px);
+            }
+        }
+
+        /* Loading State */
+        .loading {
+            text-align: center;
+            padding: 2rem;
+            color: #047857;
+            font-weight: 500;
+            display: none;
+        }
+
+        .loading.visible {
+            display: block;
+        }
+
+        .spinner {
+            border: 3px solid #e5e7eb;
+            border-top: 3px solid #047857;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 1rem;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Output Section */
+        .output-card {
+            display: none;
+            background: #f0fdf4;
+            border: 2px solid #86efac;
+            border-radius: 12px;
+            padding: 2rem;
+        }
+
+        .output-card.visible {
+            display: block;
+        }
+
+        .output-card.error {
+            background: #fef2f2;
+            border-color: #fca5a5;
+        }
+
+        .output-header {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            margin-bottom: 1rem;
+        }
+
+        .output-icon {
+            font-size: 1.75rem;
+        }
+
+        .output-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: #065f46;
+        }
+
+        .output-card.error .output-title {
+            color: #dc2626;
+        }
+
+        .output-text {
+            color: #374151;
+            line-height: 1.8;
+            white-space: pre-wrap;
+            font-size: 1rem;
+        }
+
+        /* Footer */
+        footer {
+            background: #ffffff;
+            border-top: 1px solid #e5e7eb;
+            padding: 2.5rem 2rem;
+            margin-top: 4rem;
+        }
+
+        .footer-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            text-align: center;
+            color: #6b7280;
+        }
+
+        .footer-content p {
+            margin-bottom: 0.5rem;
+        }
+
+        .footer-content strong {
+            color: #047857;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .hero-container {
+                grid-template-columns: 1fr;
+                gap: 2rem;
+            }
+
+            .hero-content h1 {
+                font-size: 2rem;
+            }
+
+            .hero-image {
+                height: 250px;
+            }
+
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .card {
+                padding: 1.5rem;
+            }
+
+            .nav-container {
+                flex-direction: column;
+                gap: 0.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav>
+        <div class="nav-container">
+            <div>
+                <div class="logo">AgroSense</div>
+                <div class="nav-subtitle">Precision Irrigation Monitoring</div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="hero-container">
+            <div class="hero-content">
+                <h1>Smart Water Management for Sustainable Agriculture</h1>
+                <p>Leverage AI-powered insights to optimize irrigation, conserve water, and maximize crop yields. Make data-driven decisions for your farm's future.</p>
+            </div>
+            <div class="hero-image">
+                <img src="https://images.unsplash.com/photo-1625246333195-78d9c38ad449?w=800&h=600&fit=crop" 
+                     alt="Farmer working in field" 
+                     onerror="this.src='https://images.unsplash.com/photo-1574943320219-553eb213f72d?w=800&h=600&fit=crop'">
+            </div>
+        </div>
+    </section>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <!-- Input Form Card -->
+        <div class="card">
+            <h2 class="card-title">Analyze Field Conditions</h2>
+            <p class="card-subtitle">Enter your current field data to receive AI-powered irrigation recommendations</p>
+
+            <form id="irrigationForm">
+                <div style="margin-bottom: 1.5rem;">
+                    <button type="button" id="autoFillBtn" class="auto-fill-btn">
+                        📍 Auto-Fill Weather Data from Location
+                    </button>
+                    <p id="locationStatus" class="location-status"></p>
+                </div>
+
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label for="soil_moisture">Soil Moisture (%)</label>
+                        <input type="number" id="soil_moisture" name="soil_moisture" 
+                               step="0.1" min="0" max="100" required 
+                               placeholder="e.g., 45.5">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="rainfall">Rainfall (mm)</label>
+                        <input type="number" id="rainfall" name="rainfall" 
+                               step="0.1" min="0" required 
+                               placeholder="e.g., 10.2">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="temperature">Temperature (°C)</label>
+                        <input type="number" id="temperature" name="temperature" 
+                               step="0.1" required 
+                               placeholder="e.g., 28.5">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="evapotranspiration">Evapotranspiration (mm/day)</label>
+                        <input type="number" id="evapotranspiration" name="evapotranspiration" 
+                               step="0.1" min="0" required 
+                               placeholder="e.g., 5.3">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="crop">Crop Type</label>
+                        <select id="crop" name="crop" required>
+                            <option value="">Select crop...</option>
+                            <option value="Wheat">Wheat</option>
+                            <option value="Rice">Rice</option>
+                            <option value="Maize">Maize</option>
+                            <option value="Cotton">Cotton</option>
+                            <option value="Soybean">Soybean</option>
+                            <option value="Sugarcane">Sugarcane</option>
+                            <option value="Potato">Potato</option>
+                            <option value="Tomato">Tomato</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="growth_stage">Growth Stage</label>
+                        <select id="growth_stage" name="growth_stage" required>
+                            <option value="">Select stage...</option>
+                            <option value="Germination">Germination</option>
+                            <option value="Vegetative">Vegetative</option>
+                            <option value="Flowering">Flowering</option>
+                            <option value="Maturation">Maturation</option>
+                            <option value="Harvesting">Harvesting</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="season">Season</label>
+                        <select id="season" name="season" required>
+                            <option value="">Select season...</option>
+                            <option value="Spring">Spring</option>
+                            <option value="Summer">Summer</option>
+                            <option value="Autumn">Autumn</option>
+                            <option value="Winter">Winter</option>
+                        </select>
+                    </div>
+                </div>
+
+                <button type="submit" id="submitBtn">Analyze Irrigation Status</button>
+            </form>
+        </div>
+
+        <!-- Loading State -->
+        <div class="loading" id="loading">
+            <div class="spinner"></div>
+            <p>Analyzing field data with AI...</p>
+        </div>
+
+        <!-- Output Card -->
+        <div class="output-card" id="outputCard">
+            <div class="output-header">
+                <span class="output-icon" id="outputIcon">💧</span>
+                <h3 class="output-title" id="outputTitle">Irrigation Recommendation</h3>
+            </div>
+            <div class="output-text" id="outputText"></div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer>
+        <div class="footer-content">
+            <p><strong>AgroSense</strong> - Precision Irrigation Monitoring System</p>
+            <p>Empowering farmers with AI-driven insights for sustainable water management</p>
+        </div>
+    </footer>
+
+    <!-- Chat Widget -->
+    <button class="chat-button" id="chatButton">�‍🌾</button>
+    
+    <div class="chat-widget" id="chatWidget">
+        <div class="chat-header">
+            <h3><span class="farmer-avatar">👨‍🌾</span> Farmer Assistant</h3>
+            <button class="chat-close" id="chatClose">×</button>
+        </div>
+        <div class="chat-messages" id="chatMessages">
+            <div class="chat-message bot">
+                👋 Hello farmer! I'm here to help with your agriculture questions. Ask me about crops, seasons, soil, pests, or farming techniques! 🌾
+            </div>
+        </div>
+        <div class="typing-indicator" id="typingIndicator">
+            <div class="typing-dot"></div>
+            <div class="typing-dot"></div>
+            <div class="typing-dot"></div>
+        </div>
+        <div class="chat-input-container">
+            <input type="text" class="chat-input" id="chatInput" placeholder="Ask about farming, crops, seasons...">
+            <button class="chat-send" id="chatSend">Send</button>
+        </div>
+    </div>
+
+    <script>
+        const form = document.getElementById('irrigationForm');
+        const submitBtn = document.getElementById('submitBtn');
+        const autoFillBtn = document.getElementById('autoFillBtn');
+        const locationStatus = document.getElementById('locationStatus');
+        const loading = document.getElementById('loading');
+        const outputCard = document.getElementById('outputCard');
+        const outputText = document.getElementById('outputText');
+        const outputIcon = document.getElementById('outputIcon');
+        const outputTitle = document.getElementById('outputTitle');
+
+        const API_URL = 'http://localhost:8000/analyze';
+        const CHAT_URL = 'http://localhost:8000/chat';
+
+        // Chat widget functionality
+        const chatButton = document.getElementById('chatButton');
+        const chatWidget = document.getElementById('chatWidget');
+        const chatClose = document.getElementById('chatClose');
+        const chatMessages = document.getElementById('chatMessages');
+        const chatInput = document.getElementById('chatInput');
+        const chatSend = document.getElementById('chatSend');
+        const typingIndicator = document.getElementById('typingIndicator');
+
+        chatButton.addEventListener('click', () => {
+            chatWidget.classList.toggle('open');
+            if (chatWidget.classList.contains('open')) {
+                chatInput.focus();
+            }
+        });
+
+        chatClose.addEventListener('click', () => {
+            chatWidget.classList.remove('open');
+        });
+
+        async function sendChatMessage() {
+            const message = chatInput.value.trim();
+            if (!message) return;
+
+            // Add user message to chat
+            const userMsg = document.createElement('div');
+            userMsg.className = 'chat-message user';
+            userMsg.textContent = message;
+            chatMessages.appendChild(userMsg);
+
+            // Clear input
+            chatInput.value = '';
+
+            // Scroll to bottom
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+
+            // Show typing indicator
+            typingIndicator.classList.add('visible');
+            chatMessages.appendChild(typingIndicator);
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+
+            try {
+                // Send to backend
+                const response = await fetch(CHAT_URL, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ message })
+                });
+
+                const data = await response.json();
+
+                // Hide typing indicator
+                typingIndicator.classList.remove('visible');
+
+                if (!response.ok) {
+                    throw new Error(data.detail || 'Failed to get response');
+                }
+
+                // Add bot response
+                const botMsg = document.createElement('div');
+                botMsg.className = 'chat-message bot';
+                botMsg.textContent = data.reply;
+                chatMessages.appendChild(botMsg);
+
+            } catch (error) {
+                // Hide typing indicator
+                typingIndicator.classList.remove('visible');
+
+                // Show error message
+                const errorMsg = document.createElement('div');
+                errorMsg.className = 'chat-message bot';
+                errorMsg.textContent = `Sorry, I'm having trouble right now. ${error.message}`;
+                chatMessages.appendChild(errorMsg);
+            }
+
+            // Scroll to bottom
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        }
+
+        chatSend.addEventListener('click', sendChatMessage);
+        chatInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                sendChatMessage();
+            }
+        });
+
+        // Auto-fill weather data from location
+        autoFillBtn.addEventListener('click', async () => {
+            locationStatus.textContent = '📍 Getting your location...';
+            locationStatus.classList.remove('error');
+            autoFillBtn.disabled = true;
+
+            try {
+                // Get user's location
+                const position = await new Promise((resolve, reject) => {
+                    navigator.geolocation.getCurrentPosition(resolve, reject);
+                });
+
+                const { latitude, longitude } = position.coords;
+                locationStatus.textContent = `📍 Found location (${latitude.toFixed(2)}, ${longitude.toFixed(2)}). Fetching weather...`;
+
+                // Fetch weather data from Open-Meteo API (free, no key needed)
+                const weatherUrl = `https://api.open-meteo.com/v1/forecast?latitude=${latitude}&longitude=${longitude}&current=temperature_2m,precipitation,et0_fao_evapotranspiration&daily=precipitation_sum&timezone=auto`;
+                
+                const response = await fetch(weatherUrl);
+                const data = await response.json();
+
+                if (!response.ok) {
+                    throw new Error('Failed to fetch weather data');
+                }
+
+                // Fill form fields with weather data
+                document.getElementById('temperature').value = data.current.temperature_2m.toFixed(1);
+                document.getElementById('rainfall').value = data.daily.precipitation_sum[0].toFixed(1);
+                document.getElementById('evapotranspiration').value = data.current.et0_fao_evapotranspiration.toFixed(1);
+
+                // Set current season based on date
+                const month = new Date().getMonth();
+                let season;
+                if (month >= 2 && month <= 4) season = 'Spring';
+                else if (month >= 5 && month <= 7) season = 'Summer';
+                else if (month >= 8 && month <= 10) season = 'Autumn';
+                else season = 'Winter';
+                document.getElementById('season').value = season;
+
+                locationStatus.textContent = '✅ Weather data loaded! Please fill remaining fields manually.';
+                locationStatus.style.color = '#059669';
+
+            } catch (error) {
+                locationStatus.textContent = `❌ Error: ${error.message}. Please enable location access or fill manually.`;
+                locationStatus.classList.add('error');
+            } finally {
+                autoFillBtn.disabled = false;
+            }
+        });
+
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            // Reset UI
+            outputCard.classList.remove('visible', 'error');
+            loading.classList.add('visible');
+            submitBtn.disabled = true;
+
+            // Collect form data
+            const formData = {
+                soil_moisture: parseFloat(document.getElementById('soil_moisture').value),
+                rainfall: parseFloat(document.getElementById('rainfall').value),
+                temperature: parseFloat(document.getElementById('temperature').value),
+                evapotranspiration: parseFloat(document.getElementById('evapotranspiration').value),
+                crop: document.getElementById('crop').value,
+                growth_stage: document.getElementById('growth_stage').value,
+                season: document.getElementById('season').value
+            };
+
+            try {
+                // Send request to backend
+                const response = await fetch(API_URL, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(formData)
+                });
+
+                const data = await response.json();
+
+                if (!response.ok) {
+                    throw new Error(data.detail || 'Failed to get recommendation');
+                }
+
+                // Display success result
+                outputIcon.textContent = '💧';
+                outputTitle.textContent = 'Irrigation Recommendation';
+                outputText.textContent = data.recommendation;
+                outputCard.classList.add('visible');
+
+            } catch (error) {
+                // Display error
+                outputIcon.textContent = '⚠️';
+                outputTitle.textContent = 'Error';
+                outputText.textContent = `${error.message}\n\nPlease ensure:\n• Backend server is running at http://localhost:8000\n• LangFlow service is accessible\n• All form fields are filled correctly`;
+                outputCard.classList.add('visible', 'error');
+            } finally {
+                // Hide loading
+                loading.classList.remove('visible');
+                submitBtn.disabled = false;
+            }
+        });
+    </script>
+</body>
+</html>
